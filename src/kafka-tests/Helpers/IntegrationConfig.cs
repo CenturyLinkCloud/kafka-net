@@ -17,7 +17,8 @@ namespace kafka_tests.Helpers
             get
             {
                 var url = ConfigurationManager.AppSettings["IntegrationKafkaServerUrl"];
-                if (url == null) throw new ConfigurationErrorsException("IntegrationKafkaServerUrl must be specified in the app.config file.");
+                if (String.IsNullOrEmpty(url))
+                    throw new ConfigurationErrorsException("IntegrationKafkaServerUrl must be specified in the app.config file.");
                 return new Uri(url);
             }
         }

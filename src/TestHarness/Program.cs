@@ -13,7 +13,7 @@ namespace TestHarness
         static void Main(string[] args)
         {
             //create an options file that sets up driver preferences
-            var options = new KafkaOptions(new Uri("http://CSDKAFKA01:9092"), new Uri("http://CSDKAFKA02:9092"))
+            var options = new KafkaOptions(TestHardnessConfig.KafkaBrokerList.ToArray())
                 {
                     Log = new ConsoleLog()
                 };
