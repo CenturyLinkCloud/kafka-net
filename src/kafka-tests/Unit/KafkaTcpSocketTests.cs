@@ -222,14 +222,13 @@ namespace kafka_tests.Unit
 
                 Console.WriteLine("Sending first message to receive...");
                 server.SendDataAsync(firstMessage.ToBytes());
-                var firstResponseTask = test.ReadAsync(4);
-
                 Console.WriteLine("Sending second message to receive...");
                 server.SendDataAsync(secondMessage.ToBytes());
-                var secondResponseTask = test.ReadAsync(4);
 
-                Assert.That(firstResponseTask.Result.ToInt32(), Is.EqualTo(firstMessage));
-                Assert.That(secondResponseTask.Result.ToInt32(), Is.EqualTo(secondMessage));
+                var responses = new [] { test.ReadAsync(4), test.ReadAsync(4) }.Select(t => t.Result.ToInt32()).ToArray();
+
+                Assert.Contains(firstMessage, responses);
+                Assert.Contains(secondMessage, responses);
             }
         }
 

@@ -177,7 +177,6 @@ namespace kafka_tests.Integration
             }
         }
 
-
         [Test]
         public void ConsumerShouldMoveToNextAvailableOffsetWhenQueryingForNextMessage()
         {
@@ -185,7 +184,7 @@ namespace kafka_tests.Integration
             using (var producer = new Producer(router))
             {
                 var offsets = producer.GetTopicOffsetAsync(IntegrationConfig.IntegrationTopic).Result;
-                Assert.That(offsets.Count, Is.EqualTo(2), "This test requires there to be exactly two paritions.");
+                Assert.That(offsets.Count, Is.EqualTo(2), "This test requires there to be exactly two partitions.");
                 Assert.That(offsets.Count(x => x.Offsets.Max(o => o) > 1000), Is.EqualTo(2), "Need more than 1000 messages in each topic for this test to work.");
 
                 //set offset 1000 messages back on one partition.  We should be able to get all 1000 messages over multiple calls.
@@ -205,7 +204,6 @@ namespace kafka_tests.Integration
 
                     Assert.That(consumerOffset, Is.EqualTo(serverOffset), "The consumerOffset position should match the server offset position.");
                     Assert.That(data.Count, Is.EqualTo(2000), "We should have received 2000 messages from the server.");
-
                 }
             }
         }

@@ -18,7 +18,6 @@ namespace kafka_tests.Integration
         [SetUp]
         public void Setup()
         {
-
         }
 
         [Test]
