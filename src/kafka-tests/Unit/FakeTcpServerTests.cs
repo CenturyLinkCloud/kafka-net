@@ -55,7 +55,7 @@ namespace kafka_tests.Unit
         }
 
         [Test]
-        public void ShouldDisposeWithoutExecptionThrown()
+        public void ShouldDisposeWithoutExceptionThrown()
         {
             using (var server = new FakeTcpServer(8999))
             {

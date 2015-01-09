@@ -5,7 +5,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using KafkaNet.Common;
 
 namespace kafka_tests.Helpers
 {
@@ -87,10 +86,10 @@ namespace kafka_tests.Helpers
                     using (_client)
                     {
                         var buffer = new byte[4096];
-                        var stream = _client.GetStream();
 
                         while (!_disposeToken.IsCancellationRequested)
                         {
+                            var stream = _client.GetStream();
                             //connect client
                             var connectTask = stream.ReadAsync(buffer, 0, buffer.Length, _disposeToken.Token);
 
@@ -130,6 +129,4 @@ namespace kafka_tests.Helpers
             }
         }
     }
-
-
 }

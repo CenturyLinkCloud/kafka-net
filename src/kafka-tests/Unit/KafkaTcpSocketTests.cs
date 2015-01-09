@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -395,7 +396,7 @@ namespace kafka_tests.Unit
         public void WriteAndReadShouldBeAsyncronous()
         {
             var write = new List<int>();
-            var read = new List<int>();
+            var read = new ConcurrentBag<int>();
             var expected = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
             using (var server = new FakeTcpServer(FakeServerPort))
@@ -413,8 +414,10 @@ namespace kafka_tests.Unit
                     }).ToArray();
 
                 Task.WaitAll(tasks);
-                Assert.That(write.OrderBy(x => x), Is.EqualTo(expected));
-                Assert.That(read.OrderBy(x => x), Is.EqualTo(expected));
+                Assert.That(write.OrderBy(x => x).ToList(), Is.EqualTo(expected));
+                Assert.That(read.OrderBy(x => x).ToList(), Is.EqualTo(expected));
+                // Don't let server go out of scope before test has finished accessing it.
+                server.DropConnection();
             }
         }
 
