@@ -95,5 +95,4 @@ namespace KafkaNet.Protocol
             return Equals((Partition) obj);
         }
     }
-
 }

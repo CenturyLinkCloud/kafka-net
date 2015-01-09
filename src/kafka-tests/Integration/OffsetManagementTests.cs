@@ -21,6 +21,7 @@ namespace kafka_tests.Integration
         }
 
         [Test]
+        [Ignore("Not supported currently in 8.1.1?")]
         public void OffsetFetchRequestOfNonExistingGroupShouldReturnNoError()
         {
             //From documentation: https://cwiki.apache.org/confluence/display/KAFKA/A+Guide+To+The+Kafka+Protocol#AGuideToTheKafkaProtocol-OffsetFetchRequest
