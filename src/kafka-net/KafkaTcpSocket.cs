@@ -184,7 +184,7 @@ namespace KafkaNet
                 catch
                 {
                     reconnectionDelay = Math.Min(DefaultReconnectionMaxTimeout, reconnectionDelay * DefaultReconnectionTimeoutMultiplier);
-                    _log.WarnFormat("Failed re-connection to:{0}.  Will retry in:{1}", _endpoint, reconnectionDelay);
+                    _log.WarnFormat("Failed re-connection to:{0}.  Will retry in: {1}ms", _endpoint, reconnectionDelay);
                 }
 
                 await Task.Delay(TimeSpan.FromMilliseconds(reconnectionDelay), _disposeToken.Token);
