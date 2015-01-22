@@ -121,16 +121,23 @@ namespace KafkaNet.Common
                     Write(value.Length);
                     break;
             }
-           
+
             Write(value);
         }
 
         public void Write(string value, StringPrefixEncoding encoding)
         {
-            if (string.IsNullOrEmpty(value))
+            if (value == null)
             {
-                Write(-1);
-                return;
+                switch (encoding)
+                {
+                    case StringPrefixEncoding.Int16:
+                        Write((Int16)(-1));
+                        return;
+                    default:
+                        Write(-1);
+                        return;
+                }
             }
 
             switch (encoding)
