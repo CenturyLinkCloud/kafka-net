@@ -1,11 +1,8 @@
-﻿using System.Net;
-using KafkaNet;
+﻿using KafkaNet;
 using KafkaNet.Model;
 using KafkaNet.Protocol;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace kafka_tests.Fakes
@@ -34,7 +31,7 @@ namespace kafka_tests.Fakes
             get { return true; }
         }
 
-        public Task SendAsync(byte[] payload)
+        public Task SendAsync(KafkaDataPayload payload)
         {
             throw new NotImplementedException();
         }

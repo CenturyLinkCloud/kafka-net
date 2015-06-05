@@ -7,7 +7,7 @@ namespace KafkaNet.Model
 {
     public class KafkaOptions
     {
-        private const int DefaultResponseTimeout = 30000;
+        private const int DefaultResponseTimeout = 60000;
 
         /// <summary>
         /// List of Uri connections to kafka servers.  The are used to query for metadata from Kafka.  More than one is recommended.
@@ -52,6 +52,10 @@ namespace KafkaNet.Model
         /// Log object to record operational messages.
         /// </summary>
         public IKafkaLog Log { get; set; }
+        /// <summary>
+        /// The maximum time to wait when backing off on reconnection attempts.
+        /// </summary>
+        public TimeSpan? MaximumReconnectionTimeout { get; set; }
 
         public KafkaOptions(params Uri[] kafkaServerUri)
         {

@@ -112,7 +112,7 @@ namespace KafkaNet
 
         private Task ConsumeTopicPartitionAsync(string topic, int partitionId)
         {
-            return Task.Factory.StartNew(async () =>
+            return Task.Run(async () =>
             {
                 try
                 {
@@ -133,29 +133,31 @@ namespace KafkaNet
                                 Topic = topic,
                                 PartitionId = partitionId,
                                 Offset = offset,
-                                MaxBytes = bufferSizeHighWatermark
+                                MaxBytes = bufferSizeHighWatermark,
                             };
 
                             var fetches = new List<Fetch> { fetch };
 
                             var fetchRequest = new FetchRequest
                                 {
+                                    MaxWaitTime = (int)Math.Min((long)int.MaxValue, _options.MaxWaitTimeForMinimumBytes.TotalMilliseconds),
+                                    MinBytes = _options.MinimumBytes,
                                     Fetches = fetches
                                 };
 
                             //make request and post to queue
                             var route = _options.Router.SelectBrokerRoute(topic, partitionId);
 
-                            var responses = await route.Connection.SendAsync(fetchRequest);
+                            var responses = await route.Connection.SendAsync(fetchRequest).ConfigureAwait(false);
 
                             if (responses.Count > 0)
                             {
                                 var response = responses.FirstOrDefault(); //we only asked for one response
 
-                                HandleResponseErrors(fetch, response);
-
                                 if (response != null && response.Messages.Count > 0)
                                 {
+                                    HandleResponseErrors(fetch, response);
+
                                     foreach (var message in response.Messages)
                                     {
                                         _fetchResponseQueue.Add(message, _disposeToken.Token);

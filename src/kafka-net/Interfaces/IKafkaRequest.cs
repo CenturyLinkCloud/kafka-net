@@ -11,6 +11,10 @@ namespace KafkaNet
     public interface IKafkaRequest<out T>
     {
         /// <summary>
+        /// Indicates this request should wait for a response from the broker
+        /// </summary>
+        bool ExpectResponse { get; }
+        /// <summary>
         /// Descriptive name used to identify the source of this request. 
         /// </summary>
         string ClientId { get; set; }
@@ -26,11 +30,11 @@ namespace KafkaNet
         /// Encode this request into the Kafka wire protocol.
         /// </summary>
         /// <returns>Byte[] representing the binary wire protocol of this request.</returns>
-        byte[] Encode();
+        KafkaDataPayload Encode();
         /// <summary>
         /// Decode a response payload from Kafka into an enumerable of T responses. 
         /// </summary>
-        /// <param name="payload">Payload data returned by Kafka servers.</param>
+        /// <param name="payload">Buffer data returned by Kafka servers.</param>
         /// <returns></returns>
         IEnumerable<T> Decode(byte[] payload);
     }

@@ -9,24 +9,28 @@ namespace KafkaNet.Protocol
     {
         internal const int DefaultMinBlockingByteBufferSize = 4096;
         internal const int DefaultBufferSize = DefaultMinBlockingByteBufferSize * 8;
-        private const int DefaultMaxBlockingWaitTime = 5000;
+        internal const int DefaultMaxBlockingWaitTime = 5000;
 
         /// <summary>
         /// Indicates the type of kafka encoding this request is
         /// </summary>
         public ApiKeyRequestType ApiKey { get { return ApiKeyRequestType.Fetch; } }
         /// <summary>
-        /// The maximum amount of time to block for the MinBytes to be available before returning.
+        /// The max wait time is the maximum amount of time in milliseconds to block waiting if insufficient data is available at the time the request is issued.
         /// </summary>
         public int MaxWaitTime = DefaultMaxBlockingWaitTime;
         /// <summary>
-        /// Defines how many bytes should be available before returning data. A value of 0 indicate a no blocking command.
+        /// This is the minimum number of bytes of messages that must be available to give a response. 
+        /// If the client sets this to 0 the server will always respond immediately, however if there is no new data since their last request they will just get back empty message sets. 
+        /// If this is set to 1, the server will respond as soon as at least one partition has at least 1 byte of data or the specified timeout occurs. 
+        /// By setting higher values in combination with the timeout the consumer can tune for throughput and trade a little additional latency for reading only large chunks of data 
+        /// (e.g. setting MaxWaitTime to 100 ms and setting MinBytes to 64k would allow the server to wait up to 100ms to try to accumulate 64k of data before responding).
         /// </summary>
         public int MinBytes = DefaultMinBlockingByteBufferSize;
 
         public List<Fetch> Fetches { get; set; }
 
-        public byte[] Encode()
+        public KafkaDataPayload Encode()
         {
             return EncodeFetchRequest(this);
         }
@@ -36,7 +40,7 @@ namespace KafkaNet.Protocol
             return DecodeFetchResponse(payload);
         }
 
-        private byte[] EncodeFetchRequest(FetchRequest request)
+        private KafkaDataPayload EncodeFetchRequest(FetchRequest request)
         {          
             if (request.Fetches == null) request.Fetches = new List<Fetch>();
 
@@ -65,7 +69,12 @@ namespace KafkaNet.Protocol
                     }
                 }
 
-                return message.Payload();
+                return new KafkaDataPayload
+                {
+                    Buffer = message.Payload(),
+                    CorrelationId = request.CorrelationId,
+                    ApiKey = ApiKey
+                };
             }
         }
 

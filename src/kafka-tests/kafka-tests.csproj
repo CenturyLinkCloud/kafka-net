@@ -53,6 +53,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -60,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Fakes\FakeBrokerRouter.cs" />
     <Compile Include="Fakes\BrokerRouterProxy.cs" />
     <Compile Include="Fakes\FakeKafkaConnection.cs" />
     <Compile Include="Fakes\FakeTcpServer.cs" />
@@ -70,8 +72,12 @@
     <Compile Include="Integration\KafkaMetadataProviderUnitTests.cs" />
     <Compile Include="Integration\OffsetManagementTests.cs" />
     <Compile Include="Integration\ProducerConsumerIntegrationTests.cs" />
+    <Compile Include="Integration\ProducerIntegrationTests.cs" />
+    <Compile Include="Unit\AsyncCollectionTests.cs" />
+    <Compile Include="Unit\AsyncLockTests.cs" />
     <Compile Include="Unit\BigEndianBinaryReaderTests.cs" />
     <Compile Include="Unit\BigEndianBinaryWriterTests.cs" />
+    <Compile Include="Unit\CircularBufferTests.cs" />
     <Compile Include="Unit\FakeTcpServerTests.cs" />
     <Compile Include="Unit\KafkaConnectionTests.cs" />
     <Compile Include="Unit\KafkaEndpointTests.cs" />
@@ -84,6 +90,7 @@
     <Compile Include="Unit\ConsumerTests.cs" />
     <Compile Include="Unit\DefaultPartitionSelectorTests.cs" />
     <Compile Include="Unit\ProducerTests.cs" />
+    <Compile Include="Unit\ProtocolTests.cs" />
     <Compile Include="Unit\ProtocolBaseRequestTests.cs" />
     <Compile Include="Unit\ProtocolMessageTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -6,33 +6,42 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace kafka_tests.Helpers
+namespace kafka_tests.Fakes
 {
     public class FakeTcpServer : IDisposable
     {
-        public delegate void BytesReceivedDelegate(byte[] data);
-        public delegate void ClientEventDelegate();
-        public event BytesReceivedDelegate OnBytesReceived;
-        public event ClientEventDelegate OnClientConnected;
-        public event ClientEventDelegate OnClientDisconnected;
+        public event Action<byte[]> OnBytesReceived;
+        public event Action OnClientConnected;
+        public event Action OnClientDisconnected;
 
         private TcpClient _client;
         private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(0);
         private readonly TcpListener _listener;
         private readonly CancellationTokenSource _disposeToken = new CancellationTokenSource();
+        private TaskCompletionSource<bool> _clientConnectedTrigger = new TaskCompletionSource<bool>();
 
         private readonly Task _clientConnectionHandlerTask = null;
 
         public int ConnectionEventcount = 0;
         public int DisconnectionEventCount = 0;
+        public Task HasClientConnected { get { return _clientConnectedTrigger.Task; } }
 
         public FakeTcpServer(int port)
         {
             _listener = new TcpListener(IPAddress.Any, port);
             _listener.Start();
 
-            OnClientConnected += () => Interlocked.Increment(ref ConnectionEventcount);
-            OnClientDisconnected += () => Interlocked.Increment(ref DisconnectionEventCount);
+            OnClientConnected += () =>
+            {
+                Interlocked.Increment(ref ConnectionEventcount);
+                _clientConnectedTrigger.TrySetResult(true);
+            };
+
+            OnClientDisconnected += () =>
+            {
+                Interlocked.Increment(ref DisconnectionEventCount);
+                _clientConnectedTrigger = new TaskCompletionSource<bool>();
+            };
 
             _clientConnectionHandlerTask = StartHandlingClientRequestAsync();
         }
@@ -43,7 +52,7 @@ namespace kafka_tests.Helpers
             {
                 await _semaphoreSlim.WaitAsync();
                 Console.WriteLine("FakeTcpServer: writing {0} bytes.", data.Length);
-                await _client.GetStream().WriteAsync(data, 0, data.Length);
+                await _client.GetStream().WriteAsync(data, 0, data.Length).ConfigureAwait(false);
             }
             finally
             {
@@ -94,6 +103,7 @@ namespace kafka_tests.Helpers
                             var connectTask = stream.ReadAsync(buffer, 0, buffer.Length, _disposeToken.Token);
 
                             var bytesReceived = await connectTask;
+
                             if (bytesReceived > 0)
                             {
                                 if (OnBytesReceived != null) OnBytesReceived(buffer.Take(bytesReceived).ToArray());

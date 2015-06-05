@@ -1,12 +1,10 @@
 ﻿using System;
-using KafkaNet;
 
-namespace TestHarness
+namespace KafkaNet
 {
     /// <summary>
-    /// This class simply logs all information out to the Trace log provided by windows.  
-    /// The reason Trace is being used as the default it to remove extenal references from
-    /// the base kafka-net package.  A proper logging framework like log4net is recommended.
+    /// This class simply logs all information out to the console. Usefull for 
+    /// debug testing in console applications.
     /// </summary>
     public class ConsoleLog : IKafkaLog
     {
